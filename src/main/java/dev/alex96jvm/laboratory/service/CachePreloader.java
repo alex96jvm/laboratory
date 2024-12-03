@@ -6,6 +6,8 @@ import dev.alex96jvm.laboratory.repository.LaboratoryRepository;
 import jakarta.annotation.PostConstruct;
 import org.springframework.cache.Cache;
 import org.springframework.cache.CacheManager;
+import org.springframework.context.event.ContextRefreshedEvent;
+import org.springframework.context.event.EventListener;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Component;
 
@@ -27,12 +29,12 @@ public class CachePreloader {
         this.laboratoryService = laboratoryService;
     }
 
-    @PostConstruct
+    @EventListener(ContextRefreshedEvent.class)
     public void preloadCache() {
         preloadCacheContent();
     }
 
-    public void preloadCacheContent() {
+    private void preloadCacheContent() {
         Cache cache = cacheManager.getCache("laborant");
         if (cache != null) {
             int pageNumber = 0;
